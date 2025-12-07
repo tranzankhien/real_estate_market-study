@@ -1,18 +1,161 @@
-# IOTA dApp Starter Template
+# Real Estate Marketplace on IOTA
 
-This dApp was created using `@iota/create-dapp` that sets up a basic React
-Client dApp using the following tools:
+## 📋 Overview
 
-- [React](https://react.dev/) as the UI framework
-- [TypeScript](https://www.typescriptlang.org/) for type checking
-- [Vite](https://vitejs.dev/) for build tooling
-- [Radix UI](https://www.radix-ui.com/) for pre-built UI components
-- [ESLint](https://eslint.org/) for linting
-- [`@iota/dapp-kit`](https://docs.iota.org/developer/ts-sdk/dapp-kit) for
-  connecting to wallets and loading data
-- [pnpm](https://pnpm.io/) for package management
+A decentralized real estate marketplace (DApp) built on IOTA blockchain using Move language for smart contracts.
 
-## Deploying your Move code
+## 🏗️ System Architecture
+
+### Smart Contracts (Move)
+
+1. **Property Contract** (`move/property/`)
+   - Manage Property NFTs (representing real estate)
+   - Create and update property information
+   - Transfer ownership
+
+2. **Marketplace Contract** (`move/marketplace/`)
+   - Manage property listings
+   - Handle buy/sell transactions
+   - Collect transaction fees
+
+3. **Escrow Contract** (`move/escrow/`)
+   - Secure escrow for transactions
+   - Protect both buyers and sellers
+   - Automatic fund release
+
+### Frontend (React + TypeScript)
+
+- **CreateProperty.tsx**: Form to register new properties
+- **PropertyList.tsx**: List of properties for sale
+- **PropertyDetail.tsx**: Property details and purchase
+
+## 🚀 Installation
+
+### Requirements
+
+- Node.js >= 18
+- IOTA CLI
+- WSL/Ubuntu (for Move commands)
+
+### Step 1: Clone & Install
+
+```bash
+git clone <repo-url>
+cd real-estate_exchange-iota_dapp
+npm install
+```
+
+### Step 2: Build Smart Contracts
+
+**Open WSL Ubuntu terminal** to run Move commands:
+
+```bash
+# Build Property contract
+cd move/property
+iota move build
+
+# Build Marketplace contract
+cd ../marketplace
+iota move build
+
+# Build Escrow contract
+cd ../escrow
+iota move build
+```
+
+### Step 3: Deploy Contracts
+
+**In WSL Ubuntu:**
+
+```bash
+# Deploy each contract and save package ID
+cd move/property
+iota client publish --gas-budget 100000000
+
+cd ../marketplace
+iota client publish --gas-budget 100000000
+
+cd ../escrow
+iota client publish --gas-budget 100000000
+```
+
+### Step 4: Configure Frontend
+
+Update `src/config.ts` with your deployed Package IDs:
+
+```typescript
+export const PACKAGE_IDS = {
+  PROPERTY: "0xYOUR_PROPERTY_PACKAGE_ID",
+  MARKETPLACE: "0xYOUR_MARKETPLACE_PACKAGE_ID",
+  ESCROW: "0xYOUR_ESCROW_PACKAGE_ID",
+};
+```
+
+### Step 5: Run Frontend
+
+```bash
+npm run dev
+```
+
+## 📝 User Guide
+
+### For Sellers
+
+1. Connect IOTA wallet
+2. Go to "Register Property" tab
+3. Fill in property details: title, description, location, price, area, type
+4. Submit to create Property NFT
+
+### For Buyers
+
+1. Browse property listings
+2. Click on a property to view details
+3. Choose "Buy Now" or "Make Deposit"
+
+## 🔧 Development
+
+### Project Structure
+
+```
+real-estate_exchange-iota_dapp/
+├── move/
+│   ├── property/          # Property NFT contract
+│   ├── marketplace/       # Marketplace contract
+│   └── escrow/           # Escrow contract
+├── src/
+│   ├── App.tsx           # Main app
+│   ├── CreateProperty.tsx
+│   ├── PropertyList.tsx
+│   └── PropertyDetail.tsx
+└── package.json
+```
+
+### Roadmap
+
+**✅ Phase 1 - MVP (Completed)**
+- Basic smart contracts
+- Property registration and listing UI/UX
+
+**🚧 Phase 2 - Integration (In Progress)**
+- Blockchain query integration
+- Real buy/sell functionality
+- Escrow workflow
+
+**📋 Phase 3 - Advanced Features (Planned)**
+- Property filtering and search
+- Transaction history
+- Rating & Review system
+- IPFS image upload
+
+## 🔐 Security
+
+- Smart contracts thoroughly tested
+- Escrow protects both buyers and sellers
+- All transactions transparent on blockchain
+
+---
+
+## 📚 IOTA dApp Development Resources
 
 ### Install IOTA cli
 

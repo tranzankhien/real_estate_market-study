@@ -1,16 +1,14 @@
 import { ConnectButton, useCurrentAccount } from "@iota/dapp-kit";
-import { isValidIotaObjectId } from "@iota/iota-sdk/utils";
-import { Box, Container, Flex, Heading } from "@radix-ui/themes";
+import { Box, Container, Flex, Heading, Tabs } from "@radix-ui/themes";
 import { useState } from "react";
-import { Counter } from "./Counter";
-import { CreateCounter } from "./CreateCounter";
+import { CreateProperty } from "./CreateProperty";
+import { PropertyList } from "./PropertyList";
+import { PropertyDetail } from "./PropertyDetail";
+import { PACKAGE_IDS } from "./config";
 
 function App() {
   const currentAccount = useCurrentAccount();
-  const [counterId, setCounter] = useState(() => {
-    const hash = window.location.hash.slice(1);
-    return isValidIotaObjectId(hash) ? hash : null;
-  });
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
   return (
     <>
@@ -21,10 +19,11 @@ function App() {
         justify="between"
         style={{
           borderBottom: "1px solid var(--gray-a2)",
+          background: "var(--accent-9)",
         }}
       >
         <Box>
-          <Heading>dApp Starter Template</Heading>
+          <Heading style={{ color: "white" }}>🏠 Sàn Giao Dịch Bất Động Sản</Heading>
         </Box>
 
         <Box>
@@ -39,18 +38,47 @@ function App() {
           style={{ background: "var(--gray-a2)", minHeight: 500 }}
         >
           {currentAccount ? (
-            counterId ? (
-              <Counter id={counterId} />
-            ) : (
-              <CreateCounter
-                onCreated={(id) => {
-                  window.location.hash = id;
-                  setCounter(id);
-                }}
+            selectedPropertyId ? (
+              <PropertyDetail
+                propertyId={selectedPropertyId}
+                onBack={() => setSelectedPropertyId(null)}
               />
+            ) : (
+              <Tabs.Root defaultValue="list">
+                <Tabs.List>
+                  <Tabs.Trigger value="list">📋 Danh sách BĐS</Tabs.Trigger>
+                  <Tabs.Trigger value="create">➕ Đăng ký BĐS</Tabs.Trigger>
+                </Tabs.List>
+
+                <Box pt="4">
+                  <Tabs.Content value="list">
+                    <PropertyList onSelectProperty={setSelectedPropertyId} />
+                  </Tabs.Content>
+
+                  <Tabs.Content value="create">
+                    <CreateProperty
+                      packageId={PACKAGE_IDS.PROPERTY}
+                      onCreated={(id) => {
+                        setSelectedPropertyId(id);
+                      }}
+                    />
+                  </Tabs.Content>
+                </Box>
+              </Tabs.Root>
             )
           ) : (
-            <Heading>Please connect your wallet</Heading>
+            <Flex
+              direction="column"
+              align="center"
+              justify="center"
+              gap="4"
+              style={{ minHeight: "400px" }}
+            >
+              <Heading size="6">🔐 Vui lòng kết nối ví</Heading>
+              <Heading size="3" color="gray">
+                Để sử dụng sàn giao dịch bất động sản
+              </Heading>
+            </Flex>
           )}
         </Container>
       </Container>
